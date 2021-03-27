@@ -1,0 +1,18 @@
+
+#server:
+
+tunctl -t tap0
+mkfifo tmp.fifo
+
+ip addr add 10.1.1.1/24 dev tap0
+cat tmp.fifo | ./tunio tap0 | nc -lp 3389 >tmp.fifo
+
+
+#client:
+tunctl -t tap0
+mkfifo tmp.fifo
+
+ip addr add 10.1.1.2/24 dev tap0
+cat tmp.fifo | ./tunio tap0 | nc $serverip 3389 >tmp.fifo
+
+ping 10.1.1.1
